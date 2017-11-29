@@ -26,6 +26,10 @@ public class TheSellerLogin extends JFrame {
     int contSales;
     int error = 0;
     private String currentUser = "";
+    private int nTries = 0;
+    private int delay = 500;
+    private int maxDelay = 3000;
+    private int delayStep = 500;
     
     private JButton jButton1;
     private JButton jButton10;
@@ -42,7 +46,7 @@ public class TheSellerLogin extends JFrame {
     private JButton jButton5;
     private JButton jButton6;
     private JButton jButton7;
-    private JButton jButton8;
+    private JButton login_jButton8;
     private JButton jButton9;
     private JLabel jLabel1;
     private JLabel jLabel10;
@@ -76,8 +80,8 @@ public class TheSellerLogin extends JFrame {
     private JTextArea jTextArea1;
     private JTextArea jTextArea3;
     private JTextArea jTextArea4;
-    private JTextField jTextField1;
-    private JTextField jTextField2;
+    private JTextField loginUser_jTextField1;
+    private JTextField loginPasswd_jTextField2;
     private JTextField salesSellerFinish2_jTextField3;
     private JTextField userIdSellerFinish2_jTextField4;
     private JMenuBar menuBar;
@@ -98,9 +102,9 @@ public class TheSellerLogin extends JFrame {
         this.jPanel1 = new JPanel();
         this.jLabel1 = new JLabel();
         this.jLabel2 = new JLabel();
-        this.jTextField2 = new JTextField();
-        this.jTextField1 = new JTextField();
-        this.jButton8 = new JButton();
+        this.loginPasswd_jTextField2 = new JTextField();
+        this.loginUser_jTextField1 = new JTextField();
+        this.login_jButton8 = new JButton();
         this.jLabel12 = new JLabel();
         this.jButton17 = new JButton();
         this.jPanel2 = new JPanel();
@@ -164,27 +168,27 @@ public class TheSellerLogin extends JFrame {
         this.jPanel1.add(this.jLabel2);
         this.jLabel2.setBounds(52, 130, 60, 14);
 
-        this.jTextField2.setText(" ");
-        this.jPanel1.add(this.jTextField2);
-        this.jTextField2.setBounds(170, 130, 69, 20);
+        this.loginPasswd_jTextField2.setText(" ");
+        this.jPanel1.add(this.loginPasswd_jTextField2);
+        this.loginPasswd_jTextField2.setBounds(170, 130, 69, 20);
 
-        this.jTextField1.setText(" ");
-        this.jTextField1.addActionListener(new ActionListener() {
+        this.loginUser_jTextField1.setText(" ");
+        this.loginUser_jTextField1.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 TheSellerLogin.this.jTextField1ActionPerformed(evt);
             }
         });
-        this.jPanel1.add(this.jTextField1);
-        this.jTextField1.setBounds(170, 90, 69, 20);
+        this.jPanel1.add(this.loginUser_jTextField1);
+        this.loginUser_jTextField1.setBounds(170, 90, 69, 20);
 
-        this.jButton8.setText("Ok");
-        this.jButton8.addActionListener(new ActionListener() {
+        this.login_jButton8.setText("Ok");
+        this.login_jButton8.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 TheSellerLogin.this.login_jButton8ActionPerformed(evt);
             }
         });
-        this.jPanel1.add(this.jButton8);
-        this.jButton8.setBounds(270, 200, 80, 23);
+        this.jPanel1.add(this.login_jButton8);
+        this.login_jButton8.setBounds(270, 200, 80, 23);
 
         this.jLabel12.setIcon(new ImageIcon(getClass().getResource(
                 "/data/logo.png")));
@@ -531,9 +535,26 @@ public class TheSellerLogin extends JFrame {
     }
 
     private void login_jButton8ActionPerformed(ActionEvent evt) {
-        String userID_name = this.jTextField1.getText().replaceAll(" ", "");
-        String pass = this.jTextField2.getText().replaceAll(" ", "");
-        if ((userID_name.equals("")) || (pass.equals(""))) {
+    	try {
+			Thread.sleep(this.delay);
+		} catch (InterruptedException e) {}
+		
+		if (this.delay < this.maxDelay)
+			this.delay += this.delayStep;
+		
+		if (this.nTries <= 5)
+			this.nTries++;
+    	
+        String userID_name = this.loginUser_jTextField1.getText().replaceAll(" ", "");
+        String pass = this.loginPasswd_jTextField2.getText().replaceAll(" ", "");
+        
+        if (this.nTries > 5) {
+        	this.jPanel3.setVisible(true);
+            this.jLabel3.setText("Too many access attemps");
+            this.jPanel1.setVisible(false);
+            cleanJPanel1();
+            this.error = 0;
+        } else if ((userID_name.equals("")) || (pass.equals(""))) {
             this.jPanel3.setVisible(true);
             this.jLabel3.setText("All fields should be completed");
             this.jPanel1.setVisible(false);
@@ -552,8 +573,8 @@ public class TheSellerLogin extends JFrame {
             cleanJPanel1();
             this.error = 0;
         } else if (pass.length() > 5) {
-            this.jPanel3.setVisible(true);
-            this.jLabel3.setText("Length exceeded. Please contact SalesAdmin");
+        	this.jPanel3.setVisible(true);
+            this.jLabel3.setText("Wrong user or password");
             this.jPanel1.setVisible(false);
             cleanJPanel1();
             this.error = 0;
@@ -562,16 +583,21 @@ public class TheSellerLogin extends JFrame {
             int passDB = results[0];
             int UserId = results[1];
             int passInserted = Integer.parseInt(pass);
+            	
             if ((passInserted == passDB) && (UserId == 1)) {
                 this.currentUser = userID_name;
                 this.jPanel1.setVisible(false);
                 this.jPanel4.setVisible(true);
                 cleanJPanel1();
+                this.nTries = 0;
+                this.delay = 1000;
             } else if (passInserted == passDB) {
                 this.currentUser = userID_name;
                 this.jPanel1.setVisible(false);
                 this.jPanel2.setVisible(true);
                 cleanJPanel1();
+                this.nTries = 0;
+                this.delay = 1000;
             } else {
                 this.jPanel3.setVisible(true);
                 this.jLabel3.setText("Wrong user or password");
@@ -720,8 +746,8 @@ public class TheSellerLogin extends JFrame {
     }
 
     public void cleanJPanel1() {
-        this.jTextField1.setText("");
-        this.jTextField2.setText("");
+        this.loginUser_jTextField1.setText("");
+        this.loginPasswd_jTextField2.setText("");
     }
 
     public void cleanJPanel7() {
