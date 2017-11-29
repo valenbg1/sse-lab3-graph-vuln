@@ -608,6 +608,7 @@ public class TheSellerLogin extends JFrame {
     }
 
     private void sellerFinish2_jButton9ActionPerformed(ActionEvent evt) {
+    	/*
         String sales = this.salesSellerFinish2_jTextField3.getText().replaceAll(" ", "");
         if (containsLetters(sales)) {
             this.jPanel3.setVisible(true);
@@ -636,14 +637,14 @@ public class TheSellerLogin extends JFrame {
                 cleanJPanel5();
                 this.error = 1;
             } else {
-                // TODO - do this before clicking the "Finish2" button.
-                this.dabaBase.updatePlus(this.currentUser, salesInt);
+            */
+                this.dabaBase.updatePlus(this.currentUser, this.contSales);
                 this.contSales = 0;
                 this.jPanel1.setVisible(true);
                 this.jPanel5.setVisible(false);
                 cleanJPanel5();
-            }
-        }
+            //}
+        //}
     }
 
     private void sellerFinish1_jButton11ActionPerformed(ActionEvent evt) {
