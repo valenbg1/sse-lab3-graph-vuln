@@ -25,11 +25,22 @@ public class TheSellerLogin extends JFrame {
     DB dabaBase = new DB();
     int contSales;
     int error = 0;
+    
+    // New variable to track the logged-in user internally.
     private String currentUser = "";
+    
+    /*
+     * New variables to control the maximum number of failed attempts in the login form.
+     */
     private int nTries = 0;
+    private static final int MAX_TRIES = 5;
+    
+    /*
+     * New variables to control the incrementing delay in the login form.
+     */
     private int delay = 500;
-    private int maxDelay = 3000;
-    private int delayStep = 500;
+    private static final int MAX_DELAY = 3000;
+    private static final int DELAY_STEP = 500;
 
     private JButton jButton1;
     private JButton jButton10;
@@ -359,11 +370,13 @@ public class TheSellerLogin extends JFrame {
         this.jPanel5.add(this.jLabel6);
         this.jLabel6.setBounds(60, 130, 60, 14);
 
+        // The "Sales" input box is now not editable for the user in the seller's "Finish" form.
         this.salesSellerFinish2_jTextField3.setText(" ");
         this.salesSellerFinish2_jTextField3.setEditable(false);
         this.jPanel5.add(this.salesSellerFinish2_jTextField3);
         this.salesSellerFinish2_jTextField3.setBounds(170, 130, 69, 20);
 
+        // The "User ID" input box is now not editable for the user in the seller's "Finish" form.
         this.userIdSellerFinish2_jTextField4.setText(" ");
         this.userIdSellerFinish2_jTextField4.setEditable(false);
         this.userIdSellerFinish2_jTextField4
@@ -535,30 +548,40 @@ public class TheSellerLogin extends JFrame {
         }
     }
 
+    /**
+     * Action performed when the user press "Ok" in the login form.
+     * @param evt
+     */
     private void login_jButton8ActionPerformed(ActionEvent evt) {
+        // Inserting this.delay ms before the credentials are checked.
         try {
             Thread.sleep(this.delay);
-        } catch (InterruptedException e) {
-        }
+        } catch (InterruptedException e) {}
 
-        if (this.delay < this.maxDelay)
-            this.delay += this.delayStep;
-
-        if (this.nTries <= 5)
+        // Incrementing the delay in DELAY_STEP ms for next login attempt, up to MAX_DELAY.
+        if (this.delay < MAX_DELAY)
+            this.delay += DELAY_STEP;
+        
+        if (this.nTries < MAX_TRIES)
+            // Incrementing the number of failed attempts the user has made.
             this.nTries++;
+        else {
+            // If the user made more than MAX_TRIES attempts, do not perform credentials checking.
+            this.jPanel3.setVisible(true);
+            this.jLabel3.setText("Too many access attemps");
+            this.jPanel1.setVisible(false);
+            cleanJPanel1();
+            this.error = 0;
+            
+            return;
+        }
 
         String userID_name = this.loginUser_jTextField1.getText().replaceAll(
                 " ", "");
         String pass = this.loginPasswd_jTextField2.getText()
                 .replaceAll(" ", "");
 
-        if (this.nTries > 5) {
-            this.jPanel3.setVisible(true);
-            this.jLabel3.setText("Too many access attemps");
-            this.jPanel1.setVisible(false);
-            cleanJPanel1();
-            this.error = 0;
-        } else if ((userID_name.equals("")) || (pass.equals(""))) {
+        if ((userID_name.equals("")) || (pass.equals(""))) {
             this.jPanel3.setVisible(true);
             this.jLabel3.setText("All fields should be completed");
             this.jPanel1.setVisible(false);
@@ -593,6 +616,8 @@ public class TheSellerLogin extends JFrame {
                 this.jPanel1.setVisible(false);
                 this.jPanel4.setVisible(true);
                 cleanJPanel1();
+                
+                // As the login is correct, we set the login control variables to initial state for the next login.
                 this.nTries = 0;
                 this.delay = 1000;
             } else if (passInserted == passDB) {
@@ -600,6 +625,8 @@ public class TheSellerLogin extends JFrame {
                 this.jPanel1.setVisible(false);
                 this.jPanel2.setVisible(true);
                 cleanJPanel1();
+                
+                // As the login is correct, we set the login control variables to initial state for the next login.
                 this.nTries = 0;
                 this.delay = 1000;
             } else {
@@ -637,7 +664,16 @@ public class TheSellerLogin extends JFrame {
     private void jTextField4ActionPerformed(ActionEvent evt) {
     }
 
+    /**
+     * Action performed when the user press "Finish" in the last step of a seller (the increment sales number form).
+     * @param evt
+     */
     private void sellerFinish2_jButton9ActionPerformed(ActionEvent evt) {
+        /* 
+         * We do not need to do this checkings now, as the "User ID" and "sales" info is now tracked internally
+         * by the application, the user only has to visualize this info and press "Finish" (so there's no possibility
+         * of the user inputting bad things).
+         */
     	/*
         String sales = this.salesSellerFinish2_jTextField3.getText().replaceAll(" ", "");
         if (containsLetters(sales)) {
@@ -668,13 +704,19 @@ public class TheSellerLogin extends JFrame {
                 this.error = 1;
             } else {
             */
+                /* 
+                 * We use the internal this.currentUser and this.contSales, not the input provided by the user, to update
+                 * the database.
+                 */
                 this.dabaBase.updatePlus(this.currentUser, this.contSales);
                 this.contSales = 0;
                 this.jPanel1.setVisible(true);
                 this.jPanel5.setVisible(false);
                 cleanJPanel5();
-            //}
-        //}
+            /*
+            }
+        }
+        */
     }
 
     private void sellerFinish1_jButton11ActionPerformed(ActionEvent evt) {
