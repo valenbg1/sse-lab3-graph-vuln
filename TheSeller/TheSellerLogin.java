@@ -30,7 +30,7 @@ public class TheSellerLogin extends JFrame {
     private int delay = 500;
     private int maxDelay = 3000;
     private int delayStep = 500;
-    
+
     private JButton jButton1;
     private JButton jButton10;
     private JButton jButton11;
@@ -366,11 +366,12 @@ public class TheSellerLogin extends JFrame {
 
         this.userIdSellerFinish2_jTextField4.setText(" ");
         this.userIdSellerFinish2_jTextField4.setEditable(false);
-        this.userIdSellerFinish2_jTextField4.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                TheSellerLogin.this.jTextField4ActionPerformed(evt);
-            }
-        });
+        this.userIdSellerFinish2_jTextField4
+                .addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent evt) {
+                        TheSellerLogin.this.jTextField4ActionPerformed(evt);
+                    }
+                });
         this.jPanel5.add(this.userIdSellerFinish2_jTextField4);
         this.userIdSellerFinish2_jTextField4.setBounds(170, 90, 69, 20);
 
@@ -535,21 +536,24 @@ public class TheSellerLogin extends JFrame {
     }
 
     private void login_jButton8ActionPerformed(ActionEvent evt) {
-    	try {
-			Thread.sleep(this.delay);
-		} catch (InterruptedException e) {}
-		
-		if (this.delay < this.maxDelay)
-			this.delay += this.delayStep;
-		
-		if (this.nTries <= 5)
-			this.nTries++;
-    	
-        String userID_name = this.loginUser_jTextField1.getText().replaceAll(" ", "");
-        String pass = this.loginPasswd_jTextField2.getText().replaceAll(" ", "");
-        
+        try {
+            Thread.sleep(this.delay);
+        } catch (InterruptedException e) {
+        }
+
+        if (this.delay < this.maxDelay)
+            this.delay += this.delayStep;
+
+        if (this.nTries <= 5)
+            this.nTries++;
+
+        String userID_name = this.loginUser_jTextField1.getText().replaceAll(
+                " ", "");
+        String pass = this.loginPasswd_jTextField2.getText()
+                .replaceAll(" ", "");
+
         if (this.nTries > 5) {
-        	this.jPanel3.setVisible(true);
+            this.jPanel3.setVisible(true);
             this.jLabel3.setText("Too many access attemps");
             this.jPanel1.setVisible(false);
             cleanJPanel1();
@@ -573,7 +577,7 @@ public class TheSellerLogin extends JFrame {
             cleanJPanel1();
             this.error = 0;
         } else if (pass.length() > 5) {
-        	this.jPanel3.setVisible(true);
+            this.jPanel3.setVisible(true);
             this.jLabel3.setText("Wrong user or password");
             this.jPanel1.setVisible(false);
             cleanJPanel1();
@@ -583,7 +587,7 @@ public class TheSellerLogin extends JFrame {
             int passDB = results[0];
             int UserId = results[1];
             int passInserted = Integer.parseInt(pass);
-            	
+
             if ((passInserted == passDB) && (UserId == 1)) {
                 this.currentUser = userID_name;
                 this.jPanel1.setVisible(false);
@@ -678,7 +682,8 @@ public class TheSellerLogin extends JFrame {
         this.jPanel2.setVisible(false);
         cleanJPanel2();
         this.userIdSellerFinish2_jTextField4.setText(this.currentUser);
-        this.salesSellerFinish2_jTextField3.setText(String.valueOf(this.contSales));
+        this.salesSellerFinish2_jTextField3.setText(String
+                .valueOf(this.contSales));
     }
 
     private void jButton7ActionPerformed(ActionEvent evt) {
